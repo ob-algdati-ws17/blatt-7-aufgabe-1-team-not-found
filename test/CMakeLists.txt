@@ -1,6 +1,6 @@
 file(GLOB SRCS *.cpp)
 
-add_executable(testAVLTree ${SRCS} ../AVLTree/AVLTREE.h ../AVLTree/AVLTree.cpp)
+add_executable(testAVLTree ${SRCS} ../AVLTree/AVLTree.h ../AVLTree/AVLTree.cpp)
 
 target_link_libraries(testAVLTree
         gtest
