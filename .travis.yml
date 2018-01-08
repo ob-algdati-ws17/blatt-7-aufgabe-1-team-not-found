@@ -1,13 +1,13 @@
 language: cpp
 
-complier:
-      - gcc
+compiler:
+  - gcc
 
 before_script:
-    - mkdir build
-    - cd build
-    - cmake ..
+  - mkdir build
+  - cd build
+  - cmake ..
 
 script:
-    - make
-    - test/testAVLTree
+  - make
+  - test/testAVLTree
