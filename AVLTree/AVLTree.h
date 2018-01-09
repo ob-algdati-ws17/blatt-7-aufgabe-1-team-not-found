@@ -33,10 +33,13 @@ private:
         void rotateRight();
         void rotateLeftRight();
         void rotateRightLeft();
-        void upin();
+        void upin(Node * calling);
         void upout();
         bool insert(int);
         bool remove(int);
+        vector<int> *preorder() const;  // Hauptreihenfolge (© Prof. Dr. Oliver Braun)
+        vector<int> *inorder() const;   // Symmetrische Reihenfolge (© Prof. Dr. Oliver Braun)
+        vector<int> *postorder() const; // Nebenreihenfolge (© Prof. Dr. Oliver Braun)
 
     };
     Node *root = nullptr;
@@ -46,6 +49,19 @@ public:
     bool search(int);
     bool insert(int);
     bool remove(int);
+    // test methods (kriege das graphische zeug nicht zum laufen...):
+    bool isEmpty();
+    bool isSorted();
+    bool isSorted(Node * current);
+    int getHeight();
+    int getHeight(Node * current);
+    bool isBalanced();
+    bool isBalanced(Node * current);
+    vector<int> *preorder() const;      // Hauptreihenfolge (© Prof. Dr. Oliver Braun)
+    vector<int> *inorder() const;       // Symmetrische Reihenfolge (© Prof. Dr. Oliver Braun)
+    vector<int> *postorder() const; // Nebenreihenfolge (© Prof. Dr. Oliver Braun)
+
+    friend std::ostream &operator<<(std::ostream &, const AVLTree &);
 };
 
 #endif //BLATT_7_AUFGABE_1_TEAM_NOT_FOUND_AVLTREE_H
