@@ -44,9 +44,8 @@ private:
 public:
     ~AVLTree();
     bool search(int);
-    void insert(int);
-    void remove(int);
-    bool isEmpty();
+    bool insert(int);
+    bool remove(int);
 };
 
 #endif //BLATT_7_AUFGABE_1_TEAM_NOT_FOUND_AVLTREE_H
