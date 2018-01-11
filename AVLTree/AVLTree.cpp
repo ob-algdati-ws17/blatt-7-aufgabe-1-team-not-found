@@ -32,7 +32,7 @@ bool AVLTree::insert(int key) {
     } else{
         if(!search(key)){
             success = root -> insert(key);
-            if(root->prev != nullptr){
+            while(root->prev != nullptr){
                 root = root->prev;
             }
         }
@@ -55,10 +55,33 @@ bool AVLTree::search(int key) {
 bool AVLTree::remove(int key) {
     bool success = false;
     if(search(key)){
-        success = root->remove(key);
+        if(root->key == key) { //root is being removed.
+            if (root->left == nullptr && root->right == nullptr) {
+                success = root->remove(key);
+                root = nullptr;
+            } else {
+                Node *tmp;
+                if (root->left != nullptr) {
+                    tmp = root->left;
+                } else {
+                    tmp = root->right;
+                }
+                success = root->remove(key);
+                while (tmp->prev != nullptr) {
+                    tmp = tmp->prev;
+                }
+                root = tmp;
+            }
+        }else{
+            success = root->remove(key);
+            while (root->prev != nullptr) {
+                root = root->prev;
+            }
+        }
     }
     return success;
 }
+
 
 //stuff for testing only:
 
@@ -285,14 +308,24 @@ void AVLTree::Node::upin(Node * calling) {
             case -1:
                 if(left->balance == -1){
                     rotateRight();
+                    calling ->balance = 0;
+                    balance = 0;
                 }else{
+                    Node * tmp = calling->right;
                     rotateLeftRight();
+                    if(tmp->balance == -1){
+                        balance = 1;
+                        calling->balance = 0;
+                    }else{
+                        balance = 0;
+                        if(tmp->balance == 1){
+                            calling->balance = -1;
+                        }else{
+                            calling->balance = 0;
+                        }
+                    }
+                    tmp->balance = 0;
                 }
-                balance = 0;
-                calling ->balance = 0;
-                //if(prev != nullptr){
-                //    prev->upin(this);
-                //}
                 break;
             case 0:
                 balance = -1;
@@ -312,14 +345,26 @@ void AVLTree::Node::upin(Node * calling) {
             case 1:
                 if(right->balance == 1){
                     rotateLeft();
+                    balance = 0;
+                    calling ->balance = 0;
                 }else{
+                    Node * tmp = calling->left;
                     rotateRightLeft();
+                    if(tmp->balance == 1){
+                        balance = -1;
+                        calling->balance = 0;
+                    }else{
+                        balance = 0;
+                        if(tmp->balance == -1){
+                            calling->balance = 1;
+                        }else{
+                            calling->balance = 0;
+                        }
+                    }
+                    tmp->balance = 0;
+
                 }
-                balance = 0;
-                calling ->balance = 0;
-                //if(prev != nullptr){
-                 //   prev->upin(this);
-                //}
+
                 break;
             case 0:
                 balance = 1;
@@ -333,7 +378,7 @@ void AVLTree::Node::upin(Node * calling) {
         }
     }
 }
-void AVLTree::Node::upout() {}
+
 // insert
 bool AVLTree::Node::insert(int key) {
     if(key < this->key){
@@ -399,4 +444,247 @@ bool AVLTree::Node::search(int key) {
     return false;
 }
 // remove
-bool AVLTree::Node::remove(int key) {}
+bool AVLTree::Node::remove(int key) {
+    if(key < this->key){
+        return left->remove(key);
+    }
+    if(key > this->key){
+        return right->remove(key);
+    }
+    //wenn ich hierhin komme bin ich das zu entfernende Element.
+    if(left == nullptr && right == nullptr){
+        return remove0Child();
+    }
+    if(left == nullptr || right == nullptr){
+        return remove1Child();
+    }else{
+        return remove2Child();
+    }
+}
+bool  AVLTree::Node::remove0Child(){
+    bool success = false;
+    if(prev != nullptr){ // es wird ein innerer Knoten entfernt
+        if(this == prev->left){ // ich bin linker nachfolger
+            prev->left = nullptr;
+            switch(prev->balance){
+                case -1:
+                    prev->balance = 0; // höhe hat sich verändert!
+                    prev->upout();
+                    break;
+                case 0:
+                    prev->balance = 1;
+                    break;
+                case 1:
+                    prev->balance = 2; // rotate notwendig - upout wid das erledigen.
+                    prev->upout();
+                    break;
+                default:
+                    cout << "balance was " << balance << " at upout!"<<endl;
+                    break;
+            }
+        }else{ //ich bin rechter nachfolger
+            prev->right = nullptr;
+            switch(prev->balance){
+                case -1:
+                    prev->balance = -2; // rotate notwendig - upout wid das erledigen.
+                    prev->upout();
+                    break;
+                case 0:
+                    prev->balance = -1;
+                    break;
+                case 1:
+                    prev->balance = 0; // höhe hat sich verändert!
+                    prev->upout();
+                    break;
+                default:
+                    cout << "balance was " << balance << " at upout!"<<endl;
+                    break;
+            }
+        }
+        success = true;
+    }else{ // wurzel wird entfernt
+        success = true;
+    }
+    delete this;
+    return success;
+}
+
+bool  AVLTree::Node::remove1Child(){
+    bool success = false;
+    if(prev != nullptr){ // not root
+        Node * newChild;
+        if(left == nullptr){
+            right->prev=prev;
+            newChild = right;
+        }else{
+            left->prev=prev;
+            newChild = left;
+        }
+        if(this == prev->left){ //ich bin links
+            prev->left = newChild;
+            switch(prev->balance){
+                case -1:
+                    prev->balance = 0;
+                    prev->upout();
+                    break;
+                case 0:
+                    prev->balance = 1;
+                    break;
+                case 1:
+                    prev->balance = 2;
+                    prev->upout();
+                    break;
+                default:
+                    cout << "balance was " << balance << " at upout!"<<endl;
+                    break;
+            }
+        }else{ //ich bin rechts
+            prev->right = newChild;
+            switch(prev->balance){
+                case -1:
+                    prev->balance = -2;
+                    prev->upout();
+                    break;
+                case 0:
+                    prev->balance = 1;
+                    break;
+                case 1:
+                    prev->balance = 0;
+                    prev->upout();
+                    break;
+                default:
+                    cout << "balance was " << balance << " at upout!"<<endl;
+                    break;
+            }
+        }
+    }else{ // root
+        success = true;
+    }
+    delete this;
+    return success;
+}
+bool  AVLTree::Node::remove2Child(){
+    Node * symmetrischerNachfolger = right;
+    while(symmetrischerNachfolger->left != nullptr){
+        symmetrischerNachfolger = symmetrischerNachfolger->left;
+    }
+    int tmp_key = symmetrischerNachfolger->key;
+    remove(tmp_key);
+    key = tmp_key;
+}
+void AVLTree::Node::upout() {
+    Node * tmp;
+    switch(balance){
+        case 0:
+            if(prev != nullptr){ //wenn root ist der baum balanciert
+                if(prev->left == this){ //i am left
+                    switch(prev->balance){
+                        case -1:
+                            prev->balance = 0;
+                            prev->upout();
+                            break;
+                        case 0:
+                            prev->balance = 1;
+                            break;
+                        case 1:
+                            prev->balance = 2;
+                            prev->upout();
+                            break;
+                        default:
+                            cout << "balance was " << balance << " at upout(inner1)!"<<endl;
+                            break;
+                    }
+                }else{ //i am right
+                    if(prev->right != this){cout<<"im not my fathers child!"<< endl;}
+                    switch(prev->balance){
+                        case -1:
+                            prev->balance = -2;
+                            prev->upout();
+                            break;
+                        case 0:
+                            prev->balance = -1;
+                            break;
+                        case 1:
+                            prev->balance = 0;
+                            prev->upout();
+                            break;
+                        default:
+                            cout << "balance was " << balance << " at upout/(inner2)!"<<endl;
+                            break;
+                    }
+                }
+            }
+            break;
+        case 2:
+            switch(right->balance){
+                case -1:
+                    tmp = prev;
+                    balance = 0;
+                    right->balance = 0;
+                    if(right->left->balance == 1){
+                        balance = -1;
+                    }
+                    if(right->left->balance == -1){
+                        right->balance = 1;
+                    }
+                    right->left->balance = 0;
+                    rotateRightLeft();
+                    if(tmp != nullptr){
+                        tmp->upout();
+                    }
+                    break;
+                case 0:
+                    right->balance = -1;
+                    balance = 1;
+                    rotateLeft();
+                    break;
+                case 1:
+                    tmp = prev;
+                    right->balance = 0;
+                    balance = 0;
+                    rotateLeft();
+                    if(tmp != nullptr){
+                        tmp->upout();
+                    }
+                    break;
+            }
+            break;
+        case -2:
+            switch(left->balance){
+                case -1:
+                    tmp = prev;
+                    balance = 0;
+                    left->balance = 0;
+                    if(left->right->balance == -1){
+                        balance = 1;
+                    }
+                    if(left->right->balance == 1){
+                        left->balance = -1;
+                    }
+                    left->right->balance = 0;
+                    rotateLeftRight();
+                    if(tmp != nullptr){
+                        tmp->upout();
+                    }
+                    break;
+                case 0:
+                    left->balance = 1;
+                    balance = -1;
+                    rotateRight();
+                    break;
+                case 1:
+                    tmp = prev;
+                    left->balance = 0;
+                    balance = 0;
+                    rotateRight();
+                    if(tmp != nullptr){
+                        tmp->upout();
+                    }
+                    break;
+            }
+            break;
+        default:
+            cout << "balance was " << balance << " at upout!"<<endl;
+            break;
+    }
+}

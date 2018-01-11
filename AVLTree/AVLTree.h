@@ -17,7 +17,7 @@ private:
     struct Node{
         //attributes.
         int balance = 0;
-        const int key;
+        int key;
         Node *left = nullptr;
         Node *right = nullptr;
         Node *prev = nullptr;
@@ -34,9 +34,13 @@ private:
         void rotateLeftRight();
         void rotateRightLeft();
         void upin(Node * calling);
-        void upout();
+        void upout(); // 0 = called by Left, 1 = called by right
         bool insert(int);
+
         bool remove(int);
+        bool remove0Child();
+        bool remove1Child();
+        bool remove2Child();
         vector<int> *preorder() const;  // Hauptreihenfolge (© Prof. Dr. Oliver Braun)
         vector<int> *inorder() const;   // Symmetrische Reihenfolge (© Prof. Dr. Oliver Braun)
         vector<int> *postorder() const; // Nebenreihenfolge (© Prof. Dr. Oliver Braun)
