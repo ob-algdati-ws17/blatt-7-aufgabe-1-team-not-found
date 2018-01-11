@@ -276,6 +276,9 @@ void AVLTree::Node::rotateLeft() {
     prev = right;
     prev->prev = oldPrev;
     right = right->left;
+    if(right!=nullptr) {
+        right->prev = this;
+    }
     prev->left = this; // prev is now the old right one.
 }
 void AVLTree::Node::rotateRight() {
@@ -290,6 +293,9 @@ void AVLTree::Node::rotateRight() {
     prev = left;
     prev->prev = oldPrev;
     left = left->right;
+    if(left!=nullptr){
+        left->prev = this;
+    }
     prev->right = this; // prev is now the old left one.
 
 }
@@ -505,7 +511,7 @@ bool  AVLTree::Node::remove0Child(){
     }else{ // wurzel wird entfernt
         success = true;
     }
-    delete this;
+    //delete this;
     return success;
 }
 
@@ -546,7 +552,7 @@ bool  AVLTree::Node::remove1Child(){
                     prev->upout();
                     break;
                 case 0:
-                    prev->balance = 1;
+                    prev->balance = -1;
                     break;
                 case 1:
                     prev->balance = 0;
@@ -558,9 +564,14 @@ bool  AVLTree::Node::remove1Child(){
             }
         }
     }else{ // root
+        if(left != nullptr){
+            left->prev = nullptr;
+        }else{
+            right->prev = nullptr;
+        }
         success = true;
     }
-    delete this;
+    //delete this;
     return success;
 }
 bool  AVLTree::Node::remove2Child(){
@@ -653,16 +664,9 @@ void AVLTree::Node::upout() {
             switch(left->balance){
                 case -1:
                     tmp = prev;
-                    balance = 0;
                     left->balance = 0;
-                    if(left->right->balance == -1){
-                        balance = 1;
-                    }
-                    if(left->right->balance == 1){
-                        left->balance = -1;
-                    }
-                    left->right->balance = 0;
-                    rotateLeftRight();
+                    balance = 0;
+                    rotateRight();
                     if(tmp != nullptr){
                         tmp->upout();
                     }
@@ -674,9 +678,16 @@ void AVLTree::Node::upout() {
                     break;
                 case 1:
                     tmp = prev;
-                    left->balance = 0;
                     balance = 0;
-                    rotateRight();
+                    left->balance = 0;
+                    if(left->right->balance == -1){
+                        balance = 1;
+                    }
+                    if(left->right->balance == 1){
+                        left->balance = -1;
+                    }
+                    left->right->balance = 0;
+                    rotateLeftRight();
                     if(tmp != nullptr){
                         tmp->upout();
                     }

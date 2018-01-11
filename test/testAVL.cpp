@@ -388,4 +388,443 @@ TEST(AVLTestUpinDoubleRotation, Right_Left_complex_belowRoot) {
     EXPECT_TRUE(tree->isSorted());
     delete tree;
 }
+// -----------------------------------------------------------------------------------------------------------------------------------------------
+//   remove tests
+//  -----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(AVLTestRemoveRoot, OneElement) {
+    auto tree = new AVLTree();
+    tree->insert(4);
+    tree->remove(4);
+    EXPECT_TRUE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 0);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemoveRoot, TwoElements_left) {
+    auto tree = new AVLTree();
+    tree->insert(4);
+    tree->insert(3);
+    tree->remove(4);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 1);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemoveRoot, TwoElements_right) {
+    auto tree = new AVLTree();
+    tree->insert(3);
+    tree->insert(4);
+    tree->remove(3);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 1);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemoveRoot, TwoElements_both) {
+    auto tree = new AVLTree();
+    tree->insert(3);
+    tree->insert(4);
+    tree->insert(2);
+    tree->remove(3);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 2);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemoveRootWithRotation, rotateLeft) {
+    auto tree = new AVLTree();
+    tree->insert(3);
+    tree->insert(2);
+    tree->insert(4);
+    tree->insert(1);
+    tree->remove(3);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 2);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemoveRootWithRotation, rotateRight) {
+    auto tree = new AVLTree();
+    tree->insert(2);
+    tree->insert(1);
+    tree->insert(3);
+    tree->insert(4);
+    tree->remove(2);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 2);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemoveRootWithRotation, rotateLeftRight) {
+    auto tree = new AVLTree();
+    tree->insert(3);
+    tree->insert(1);
+    tree->insert(4);
+    tree->insert(2);
+    tree->remove(3);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 2);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemoveRootWithRotation, rotateRightLeft) {
+    auto tree = new AVLTree();
+    tree->insert(2);
+    tree->insert(1);
+    tree->insert(4);
+    tree->insert(3);
+    tree->remove(2);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 2);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_Without_Rotation, NoChildren_hasBrother) {
+    auto tree = new AVLTree();
+    tree->insert(2);
+    tree->insert(1);
+    tree->insert(3);
+    tree->remove(1);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 2);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_Without_Rotation, NoChildren_NoBrother) {
+    auto tree = new AVLTree();
+    tree->insert(2);
+    tree->insert(1);
+    tree->insert(3);
+    tree->insert(4);
+    tree->remove(4);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 2);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_Without_Rotation, OneChild_left) {
+    auto tree = new AVLTree();
+    tree->insert(3);
+    tree->insert(2);
+    tree->insert(4);
+    tree->insert(1);
+    tree->remove(2);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 2);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_Without_Rotation, OneChild_right) {
+    auto tree = new AVLTree();
+    tree->insert(4);
+    tree->insert(2);
+    tree->insert(5);
+    tree->insert(1);
+    tree->insert(3);
+    tree->insert(6);
+    tree->remove(5);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 3);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_Without_Rotation, TwoChildren_small) {
+    auto tree = new AVLTree();
+    tree->insert(4);
+    tree->insert(2);
+    tree->insert(5);
+    tree->insert(1);
+    tree->insert(3);
+    tree->remove(2);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 3);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_Without_Rotation, TwoChildren) {
+    auto tree = new AVLTree();
+    tree->insert(9);
+    tree->insert(4);
+    tree->insert(11);
+    tree->insert(2);
+    tree->insert(7);
+    tree->insert(10);
+    tree->insert(12);
+    tree->insert(1);
+    tree->insert(3);
+    tree->insert(5);
+    tree->insert(8);
+    tree->insert(13);
+    tree->insert(6);
+    tree->remove(4);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 4);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_With_Rotation, NoChildren_RotateLeft) {
+    auto tree = new AVLTree();
+    tree->insert(3);
+    tree->insert(2);
+    tree->insert(5);
+    tree->insert(1);
+    tree->insert(4);
+    tree->insert(6);
+    tree->insert(7);
+    tree->remove(1);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 3);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_With_Rotation, NoChildren_RotateRight) {
+    auto tree = new AVLTree();
+    tree->insert(5);
+    tree->insert(3);
+    tree->insert(6);
+    tree->insert(2);
+    tree->insert(4);
+    tree->insert(7);
+    tree->insert(1);
+    tree->remove(7);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 3);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_With_Rotation, NoChildren_RotateRightLeft) {
+    auto tree = new AVLTree();
+    tree->insert(3);
+    tree->insert(2);
+    tree->insert(6);
+    tree->insert(1);
+    tree->insert(4);
+    tree->insert(7);
+    tree->insert(5);
+    tree->remove(1);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 3);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_With_Rotation, NoChildren_RotateLeftRight) {
+    auto tree = new AVLTree();
+    tree->insert(5);
+    tree->insert(2);
+    tree->insert(6);
+    tree->insert(1);
+    tree->insert(4);
+    tree->insert(7);
+    tree->insert(3);
+    tree->remove(7);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 3);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_With_Rotation, OneChild_RotateLeft) {
+    auto tree = new AVLTree();
+    tree->insert(3);
+    tree->insert(2);
+    tree->insert(5);
+    tree->insert(1);
+    tree->insert(4);
+    tree->insert(6);
+    tree->insert(7);
+    tree->remove(2);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 3);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_With_Rotation,OneChild_RotateRight) {
+    auto tree = new AVLTree();
+    tree->insert(5);
+    tree->insert(3);
+    tree->insert(6);
+    tree->insert(2);
+    tree->insert(4);
+    tree->insert(7);
+    tree->insert(1);
+    tree->remove(6);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 3);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_With_Rotation, OneChild_RotateRightLeft) {
+    auto tree = new AVLTree();
+    tree->insert(3);
+    tree->insert(2);
+    tree->insert(6);
+    tree->insert(1);
+    tree->insert(4);
+    tree->insert(7);
+    tree->insert(5);
+    tree->remove(2);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 3);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_With_Rotation, OneChild_RotateLeftRight) {
+    auto tree = new AVLTree();
+    tree->insert(5);
+    tree->insert(2);
+    tree->insert(6);
+    tree->insert(1);
+    tree->insert(4);
+    tree->insert(7);
+    tree->insert(3);
+    tree->remove(6);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_EQ(tree->getHeight(), 3);
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_With_Rotation, TwoChildren_RotateLeft) {
+    auto tree = new AVLTree();
+    tree->insert(5);
+    tree->insert(2);
+    tree->insert(8);
+    tree->insert(1);
+    tree->insert(4);
+    tree->insert(7);
+    tree->insert(10);
+    tree->insert(3);
+    tree->insert(6);
+    tree->insert(9);
+    tree->insert(11);
+    tree->insert(12);
+    tree->remove(2);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_With_Rotation, TwoChildren_RotateRight) {
+    auto tree = new AVLTree();
+    tree->insert(8);
+    tree->insert(5);
+    tree->insert(10);
+    tree->insert(3);
+    tree->insert(6);
+    tree->insert(9);
+    tree->insert(12);
+    tree->insert(2);
+    tree->insert(4);
+    tree->insert(7);
+    tree->insert(11);
+    tree->insert(1);
+    tree->remove(10);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_With_Rotation, TwoChildren_RotateLeftRight) {
+    auto tree = new AVLTree();
+    tree->insert(5);
+    tree->insert(2);
+    tree->insert(10);
+    tree->insert(1);
+    tree->insert(4);
+    tree->insert(7);
+    tree->insert(11);
+    tree->insert(3);
+    tree->insert(6);
+    tree->insert(8);
+    tree->insert(12);
+    tree->insert(9);
+    tree->remove(2);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRemove_With_Rotation, TwoChildren_RotateRightLeft) {
+    auto tree = new AVLTree();
+    tree->insert(8);
+    tree->insert(3);
+    tree->insert(10);
+    tree->insert(2);
+    tree->insert(6);
+    tree->insert(9);
+    tree->insert(12);
+    tree->insert(1);
+    tree->insert(4);
+    tree->insert(7);
+    tree->insert(11);
+    tree->insert(5);
+    tree->remove(10);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
+
+TEST(AVLTestRandom, 100Elements) {
+    auto tree = new AVLTree();
+    int i;
+    for(i=0;i<100;i++){
+        tree->insert(i);
+    }
+    tree->remove(5);
+    tree->remove(73);
+    tree->remove(6);
+    tree->remove(24);
+    tree->remove(87);
+    tree->remove(50);
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
