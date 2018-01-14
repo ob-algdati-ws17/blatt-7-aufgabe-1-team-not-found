@@ -828,3 +828,30 @@ TEST(AVLTestRandom, 100Elements) {
     EXPECT_TRUE(tree->isSorted());
     delete tree;
 }
+
+TEST(AVLTestSearch, Search) {
+    auto tree = new AVLTree();
+    int i;
+    for(i=0;i<100;i++){
+        tree->insert(i);
+    }
+    for(i=0;i<100;i++){
+        EXPECT_TRUE(tree->search(i));
+    }
+    tree->remove(5);
+    tree->remove(73);
+    tree->remove(6);
+    tree->remove(24);
+    tree->remove(87);
+    tree->remove(50);
+    EXPECT_FALSE(tree->search(5));
+    EXPECT_FALSE(tree->search(73));
+    EXPECT_FALSE(tree->search(6));
+    EXPECT_FALSE(tree->search(24));
+    EXPECT_FALSE(tree->search(87));
+    EXPECT_FALSE(tree->search(50));
+    EXPECT_FALSE(tree->isEmpty());
+    EXPECT_TRUE(tree->isBalanced());
+    EXPECT_TRUE(tree->isSorted());
+    delete tree;
+}
